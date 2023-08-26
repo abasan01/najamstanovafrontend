@@ -5,17 +5,15 @@
       class="card-img-top"
     />
     <div class="card-body">
-      <h5 class="card-title">Stan oglas</h5>
+      <h5 class="card-title">{{ props.title }}</h5>
     </div>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Površina: 231 m²</li>
-      <li class="list-group-item">Cijena: 1000 €</li>
-      <li class="list-group-item">Lokacija: Negdje</li>
+      <li class="list-group-item">Površina: {{ props.surface }} m²</li>
+      <li class="list-group-item">Cijena: {{ props.price }} €</li>
+      <li class="list-group-item">Lokacija: {{ props.location }}</li>
     </ul>
     <div class="card-body">
-      <router-link to="/home/detail" class="card-link"
-        >Detalji oglasa</router-link
-      >
+      <a class="card-link" @click="pushRoute(props._id)">Detalji oglasa</a>
     </div>
   </div>
 </template>
@@ -23,8 +21,12 @@
 <script>
 export default {
   name: "Ad",
-  props: {
-    msg: String,
+  props: ["props"],
+  methods: {
+    pushRoute(paramsId) {
+      console.log(paramsId);
+      this.$router.push({ name: "detail", params: { id: paramsId } });
+    },
   },
 };
 </script>

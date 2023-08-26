@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container mt-5" v-if="adData">
     <div class="row">
       <div class="col-md-6">
         <!-- Slika -->
@@ -11,14 +11,23 @@
       </div>
       <div class="col-md-6">
         <!-- Detalji -->
-        <h2>Naziv Apartmana</h2>
-        <p>Lokacija: Zagreb, Croatia</p>
-        <p>Cijena: 1000€</p>
-        <p>Broj soba: 2</p>
-        <p>Kat: 3. kat</p>
-        <p>Lift: Da</p>
-        <p>Pušenje: Nije dozvoljeno</p>
-        <p>Kućni ljubimci: Dozvoljeni</p>
+        <h2>{{ adData.title }}</h2>
+        <p>Lokacija: {{ adData.location }}</p>
+        <p>Cijena: {{ adData.price }}€</p>
+        <p>Broj soba: {{ adData.rooms }}</p>
+        <p>Kat: {{ adData.floor }}. kat</p>
+        <p>
+          Lift: <span v-if="adData.lift">Ima</span>
+          <span v-if="!adData.lift">Nema</span>
+        </p>
+        <p>
+          Pušenje: <span v-if="adData.smoking">Dozvoljeno</span>
+          <span v-if="!adData.smoking">Nije dozvoljeno</span>
+        </p>
+        <p>
+          Kućni ljubimci: <span v-if="adData.pets">Dozvoljeni</span>
+          <span v-if="!adData.pets">Nisu dozvoljeni</span>
+        </p>
       </div>
     </div>
     <div class="row mt-4">
@@ -26,10 +35,7 @@
         <!-- Description -->
         <h3>Opis Apartmana</h3>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut eros
-          at ante gravida dapibus. Vestibulum ante ipsum primis in faucibus orci
-          luctus et ultrices posuere cubilia curae; Nullam eget libero nec erat
-          euismod cursus.
+          {{ adData.description }}
         </p>
       </div>
     </div>
@@ -37,5 +43,17 @@
 </template>
 
 <script>
-export default {};
+import { ads } from "@/services";
+
+export default {
+  data() {
+    return {
+      adData: null,
+    };
+  },
+  async mounted() {
+    this.adData = await ads.getAdsDetail(this.$route.params.id);
+  },
+  name: "HomeView",
+};
 </script>
