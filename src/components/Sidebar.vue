@@ -125,6 +125,7 @@ export default {
   },
   methods: {
     search() {
+      /* Parametri koji šaljemo backendu kako bi filtrirao rezultate iz baze podataka */
       const queryParams = {
         location: this.location,
         minPrice: this.price[0],
@@ -142,11 +143,13 @@ export default {
         furnished: this.preferences["Namještaj?"],
         lift: this.lift,
       };
+      /* Izbacujemo sve null, false i 0 vrijednosti kako ne bi nepotrebno imali dugačak URL */
       const filteredQueryParams = Object.fromEntries(
         Object.entries(queryParams).filter(
           ([key, value]) => value !== null && value !== false && value !== 0
         )
       );
+      /* Dodajemo te parametre te idemo na tu stranicu */
       this.$router.push({ query: filteredQueryParams }).catch(() => {});
       this.$router.go();
     },

@@ -54,6 +54,6 @@ export default {
   async mounted() {
     this.adData = await ads.getAdsDetail(this.$route.params.id);
   },
-  name: "HomeView",
+  name: "DetailView",
 };
 </script>

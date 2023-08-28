@@ -1,9 +1,6 @@
 <template>
   <div class="card" style="width: 18rem">
-    <img
-      src="https://images.pexels.com/photos/4652004/pexels-photo-4652004.jpeg?auto=compress&cs=tinysrgb&w=1600"
-      class="card-img-top"
-    />
+    <img :src="props.url[0]" class="card-img-top" />
     <div class="card-body">
       <h5 class="card-title">{{ props.title }}</h5>
     </div>

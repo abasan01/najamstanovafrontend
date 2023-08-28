@@ -19,6 +19,10 @@ const ads = {
   async getAdsDetail(id) {
     const response = await Service.get(`/ads/${id}`)
     return response.data
+  },
+  async postAds(body) {
+    const response = await Service.post(`/upload`, body)
+    return response.data
   }
 }
 

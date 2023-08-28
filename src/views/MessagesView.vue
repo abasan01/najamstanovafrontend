@@ -50,6 +50,7 @@
 import message from "@/components/Message.vue";
 
 export default {
+  name: "MessagesView",
   data() {
     return {
       conversations: [

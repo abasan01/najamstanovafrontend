@@ -13,7 +13,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="container">
-        <router-link class="navbar-brand" to="/home">
+        <router-link class="navbar-brand" :to="{ name: 'home' }">
           <img style="width: 50px" src="@/assets/logo.png"
         /></router-link>
 
@@ -24,18 +24,22 @@
           <ul class="navbar-nav mt-2 mt-lg-0">
             <!--  <li class="nav-item active" v-if="authenticated"> -->
             <li class="nav-item active">
-              <router-link class="nav-link" to="/home">Oglasi</router-link>
-            </li>
-            <li class="nav-item active">
-              <router-link class="nav-link" to="/home/detail"
-                >Detalji</router-link
+              <router-link class="nav-link" :to="{ name: 'home' }"
+                >Oglasi</router-link
               >
             </li>
             <li class="nav-item active">
-              <router-link class="nav-link" to="/messages">Poruke</router-link>
+              <router-link class="nav-link" :to="{ name: 'upload' }"
+                >Dodaj Oglas</router-link
+              >
             </li>
             <li class="nav-item active">
-              <router-link class="nav-link" to="/login"
+              <router-link class="nav-link" :to="{ name: 'messages' }"
+                >Poruke</router-link
+              >
+            </li>
+            <li class="nav-item active">
+              <router-link class="nav-link" :to="{ name: 'login' }"
                 >Ulogiraj se</router-link
               >
             </li>
@@ -49,6 +53,12 @@
     <router-view />
   </div>
 </template>
+
+<script>
+export default {
+  mounted() {},
+};
+</script>
 
 <style lang="scss">
 #app {
