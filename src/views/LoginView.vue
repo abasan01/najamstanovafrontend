@@ -37,32 +37,12 @@
                 </button>
               </div>
 
-              <!-- Ime -->
-              <div v-show="!state" class="form-outline mb-4 mt-4">
-                <input
-                  @keyup.enter="stateLS"
-                  type="text"
-                  id="name"
-                  v-model="name"
-                  class="form-control form-control-lg"
-                  placeholder="Unesite svoje ime"
-                />
-                <label class="form-label" for="name" style="margin-left: 0px"
-                  >Ime</label
-                >
-                <div class="form-notch">
-                  <div class="form-notch-leading" style="width: 9px"></div>
-                  <div class="form-notch-middle" style="width: 88.8px"></div>
-                  <div class="form-notch-trailing"></div>
-                </div>
-              </div>
-
               <!-- Email -->
               <div class="form-outline mb-4 mt-4">
                 <input
                   @keyup.enter="stateLS"
                   type="email"
-                  v-model="email"
+                  v-model="user.email"
                   id="email"
                   class="form-control form-control-lg"
                   placeholder="Unesite svoju e-mail adresu"
@@ -83,7 +63,7 @@
                   @keyup.enter="stateLS"
                   @input="checkPass"
                   type="password"
-                  v-model="password"
+                  v-model="user.pass"
                   id="password"
                   class="form-control form-control-lg"
                   placeholder="Unesite lozinku"
@@ -96,7 +76,7 @@
                 >
               </div>
 
-              <!-- Password repeat v-show signup -->
+              <!-- Potvrđenje passworda -->
               <div v-show="!state" class="form-outline mb-3">
                 <input
                   @keyup.enter="stateLS"
@@ -155,13 +135,16 @@
 </template>
 
 <script>
+import { users } from "@/services";
+
 export default {
   name: "LoginView",
   data() {
     return {
-      name: "",
-      email: "",
-      password: "",
+      user: {
+        email: "",
+        pass: "",
+      },
       passwordRepeat: "",
       state: true,
       errorMessage: "",
@@ -170,7 +153,7 @@ export default {
   },
   methods: {
     checkPass() {
-      if (!(this.password === this.passwordRepeat) && !this.state) {
+      if (!(this.user.pass === this.passwordRepeat) && !this.state) {
         this.errorState = true;
         this.errorMessage = "Šifre se ne podudaraju";
       } else this.errorState = false;
@@ -180,7 +163,8 @@ export default {
       else return this.signup();
     },
     async login() {
-      if (this.email && this.password) {
+      if (this.user.email && this.user.pass) {
+        const success = await users.loginUser(this.user);
         console.log("success: ", success);
         if (success) {
           this.$router.go();
@@ -194,7 +178,9 @@ export default {
       }
     },
     async signup() {
-      if (this.email && this.name && this.password) {
+      if (this.user.email && this.user.pass) {
+        const success = await users.setUser(this.user);
+        console.log("success: ", success);
         if (success) {
           this.login();
         } else {

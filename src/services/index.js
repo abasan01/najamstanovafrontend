@@ -8,6 +8,40 @@ let Service = axios.create({
   timeout: 70000
 })
 
+/* Token koji se šalje na backend */
+Service.interceptors.request.use((request) => {
+  try {
+    if (request.headers.authRequired) /* Provjera jel uopće potrebno autorizirati prije nego što se šalje req */ {
+      const token = users.getToken()
+      console.log("token: ", token)
+      if (token) {
+        request.headers['Authorization'] = 'Bearer ' + users.getToken();
+      } else {
+        throw new Error("Token is missing"); /* Ukoliko fali token prekidamo sa requestom na backend */
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return request;
+});
+
+/* Ukoliko dobijemo error vezano uz token */
+Service.interceptors.response.use((response) => response, async (err) => {
+  console.log(err.response.status)
+  /* Ukoliko ne valja token */
+  if (err.response.status == 401) {
+    return
+  }
+  /* Ukoliko je istekao token  */
+  if (err.response.status == 403) {
+    console.log("logout")
+    await users.logoutUser();
+    $router.go()
+    return
+  }
+})
+
 /* Za dobivanje oglasa */
 const ads = {
   async getAds(terms) {
@@ -16,16 +50,88 @@ const ads = {
     })
     return response.data
   },
+  /* Za dobivanje specifičnog oglasa */
   async getAdsDetail(id) {
-    const response = await Service.get(`/ads/${id}`)
-    return response.data
+    try {
+      const response = await Service.get(`/ads/${id}`)
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
   },
+  /* Za dodavanje oglasa */
   async postAds(body) {
-    const response = await Service.post(`/upload`, body)
-    return response.data
+    try {
+      const response = await Service.post(`/upload`, body, {
+        headers: {
+          authRequired: "true" /* Pokazuje da je potrebna autorizacija za ovaj request */
+        }
+      });
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      $router.go()
+      return false
+    }
   }
 }
 
+/* Korisnik */
+const users = {
+  /* Dodavanje novog korisnika, odnosno signup */
+  async setUser(body) {
+    try {
+      const response = await Service.post("/signup", body)
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
+  },
+  /* Login za usera, patch pošto mijenjamo status korisnika */
+  async loginUser(body) {
+    try {
+      const response = await Service.patch("/login", body)
+      localStorage.setItem("user", JSON.stringify(response.data))
+      return true
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
+  },
+  /* Logout za usera, patch pošto mijenjamo status korisnika */
+  async logoutUser() {
+    try {
+      const user = JSON.parse(this.getUser());
+      console.log(user)
+      const response = await Service.patch("/logout", user)
+
+      if (response) localStorage.removeItem("user")
+      console.log("response: ", response)
+      return
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
+  },
+  /* Za dobivanje tokena i emaila radi preglednosti */
+  getUser() {
+    return localStorage.getItem("user")
+  },
+  /* Koristimo kada šaljemo header, u funkciji je čisto radi preglednosti */
+  getToken() {
+    const user = JSON.parse(this.getUser())
+    if (user && user.token) {
+      return user.token
+    } else {
+      return false
+    }
+  }
+
+}
+
 export {
-  ads
+  ads,
+  users
 }

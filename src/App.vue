@@ -22,29 +22,30 @@
           id="navbarSupportedContent"
         >
           <ul class="navbar-nav mt-2 mt-lg-0">
-            <!--  <li class="nav-item active" v-if="authenticated"> -->
             <li class="nav-item active">
               <router-link class="nav-link" :to="{ name: 'home' }"
                 >Oglasi</router-link
               >
             </li>
-            <li class="nav-item active">
+            <li v-if="loggedIn" class="nav-item active">
               <router-link class="nav-link" :to="{ name: 'upload' }"
                 >Dodaj Oglas</router-link
               >
             </li>
-            <li class="nav-item active">
+            <li v-if="loggedIn" class="nav-item active">
               <router-link class="nav-link" :to="{ name: 'messages' }"
                 >Poruke</router-link
               >
             </li>
-            <li class="nav-item active">
+            <li v-if="!loggedIn" class="nav-item active">
               <router-link class="nav-link" :to="{ name: 'login' }"
                 >Ulogiraj se</router-link
               >
             </li>
-            <li class="nav-item active">
-              <span class="nav-link clickable">Odlogiraj se</span>
+            <li v-if="loggedIn" class="nav-item active">
+              <span class="nav-link clickable" @click="logout()"
+                >Odlogiraj se</span
+              >
             </li>
           </ul>
         </div>
@@ -55,8 +56,19 @@
 </template>
 
 <script>
+import { users } from "@/services";
+
 export default {
-  mounted() {},
+  data() {
+    return {
+      loggedIn: !!users.getUser(),
+    };
+  },
+  methods: {
+    async logout() {
+      await users.logoutUser();
+    },
+  },
 };
 </script>
 
