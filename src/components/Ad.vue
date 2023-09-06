@@ -8,6 +8,7 @@
       <li class="list-group-item">Površina: {{ props.surface }} m²</li>
       <li class="list-group-item">Cijena: {{ props.price }} €</li>
       <li class="list-group-item">Lokacija: {{ props.location }}</li>
+      <li class="list-group-item">Objavio: {{ props.createdBy.email }}</li>
     </ul>
     <div class="card-body">
       <a class="card-link" @click="pushRoute(props._id)">Detalji oglasa</a>

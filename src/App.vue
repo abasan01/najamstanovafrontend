@@ -67,6 +67,7 @@ export default {
   methods: {
     async logout() {
       await users.logoutUser();
+      this.$router.go();
     },
   },
 };

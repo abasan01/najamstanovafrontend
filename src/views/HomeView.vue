@@ -49,6 +49,7 @@ export default {
   async mounted() {
     const urlParams = new URLSearchParams(window.location.search);
     this.adsData = await ads.getAds(urlParams);
+    console.log(this.adsData);
   },
   name: "HomeView",
   components: {

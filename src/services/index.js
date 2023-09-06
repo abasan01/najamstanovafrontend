@@ -127,8 +127,16 @@ const users = {
     } else {
       return false
     }
+  },
+  /* Provjera ako je korisniku istekla autorizacija */
+  async getAuth() {
+    await Service.get("/auth", {
+      headers: {
+        authRequired: "true" /* Pokazuje da je potrebna autorizacija za ovaj request */
+      }
+    })
+    return
   }
-
 }
 
 export {

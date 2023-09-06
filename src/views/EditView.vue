@@ -1,6 +1,6 @@
 <template>
-  <div class="container mt-4">
-    <h2 class="mb-4">Dodaj oglas</h2>
+  <div class="container mt-4" v-if="adData">
+    <h2 class="mb-4">Promijeni oglas</h2>
 
     <!-- Forma za oglas -->
     <form @submit.prevent="submitAd">
@@ -10,7 +10,7 @@
           type="text"
           class="form-control"
           id="title"
-          v-model="ad.title"
+          v-model="adData.title"
           required
         />
         {{ errors.title }}
@@ -22,6 +22,8 @@
           :duplicateCheck="true"
           @vdropzone-success="handleSuccess"
           @vdropzone-queue-complete="queueComplete"
+          @vdropzone-mounted="dropzoneMounted"
+          @vdropzone-removed-file="removeThisFile"
           required
         ></dropzone>
       </div>
@@ -32,7 +34,7 @@
           class="form-control"
           id="description"
           rows="3"
-          v-model="ad.description"
+          v-model="adData.description"
           required
         ></textarea>
       </div>
@@ -43,7 +45,7 @@
           class="form-control"
           id="description"
           rows="3"
-          v-model="ad.location"
+          v-model="adData.location"
           required
         ></textarea>
       </div>
@@ -54,7 +56,7 @@
           type="number"
           class="form-control"
           id="price"
-          v-model="ad.price"
+          v-model="adData.price"
           required
         />
       </div>
@@ -65,7 +67,7 @@
           type="number"
           class="form-control"
           id="price"
-          v-model="ad.rooms"
+          v-model="adData.rooms"
           required
         />
       </div>
@@ -76,7 +78,7 @@
           type="number"
           class="form-control"
           id="price"
-          v-model="ad.surface"
+          v-model="adData.surface"
           required
         />
       </div>
@@ -104,14 +106,14 @@
           type="number"
           class="form-control"
           id="price"
-          v-model="ad.floors"
+          v-model="adData.floors"
           required
         />
       </div>
       {{ errors.floors }}
 
-      <div v-if="ad.floors != 0">
-        <input class="form-check-input" type="checkbox" v-model="ad.lift" />
+      <div v-if="adData.floors != 0">
+        <input class="form-check-input" type="checkbox" v-model="adData.lift" />
         <label class="form-check-label">Lift?</label>
       </div>
       <button type="submit" class="btn btn-primary" @click="submitAd">
@@ -129,6 +131,9 @@ import { ads, users } from "@/services";
 export default {
   data() {
     return {
+      /* podaci o oglasu */
+      adData: null,
+      imageUrls: [{}],
       /* da/ne pitanja */
       preferences: {
         "Parking?": false,
@@ -136,23 +141,6 @@ export default {
         "Pušenje?": false,
         "Dostupno tijekom sezone?": false,
         "Namještaj?": false,
-      },
-      /* Objekt koji šaljemo na backend */
-      ad: {
-        title: "",
-        url: [],
-        description: "",
-        location: "",
-        price: 1,
-        rooms: 1,
-        surface: 1,
-        parking: false,
-        pets: false,
-        season: false,
-        furnished: false,
-        floors: 0,
-        lift: false,
-        createdBy: JSON.parse(users.getUser()).email,
       },
       /* Errori */
       errors: {
@@ -172,16 +160,29 @@ export default {
         params: {
           upload_preset: "ml_default",
         },
-        autoProcessQueue: false,
         addRemoveLinks: true,
       },
     };
   },
+  async mounted() {
+    this.adData = await ads.getAdsDetail(this.$route.params.id);
+    console.log(this.adData);
+  },
   methods: {
+    dropzoneMounted() {
+      this.imageUrls = this.adData.url;
+      this.adData.url.forEach((adUrl) => {
+        var file = { size: 123, name: adUrl, type: "image/png" };
+        var url = adUrl;
+        this.$refs.myDropzone.manuallyAddFile(file, url);
+      });
+    },
     /* Funkcija koja provjerava jel sve ispunjeno kako treba */
     validateFields() {
       this.errors.title =
-        this.ad.title.length < 10 ? "Naslov mora biti dulji od 10 slova!" : "";
+        this.adData.title.length < 10
+          ? "Naslov mora biti dulji od 10 slova!"
+          : "";
 
       this.errors.url =
         this.$refs.myDropzone.getQueuedFiles().length < 1
@@ -189,24 +190,26 @@ export default {
           : "";
 
       this.errors.description =
-        this.ad.title.description < 10
+        this.adData.title.description < 10
           ? "Opis mora biti dulji od 10 slova!"
           : "";
 
       this.errors.location =
-        this.ad.location.length < 1 ? "Upišite lokaciju!" : "";
+        this.adData.location.length < 1 ? "Upišite lokaciju!" : "";
 
       this.errors.price =
-        this.ad.title.price < 1 ? "Cijena ne smije biti manja od 1!" : "";
+        this.adData.title.price < 1 ? "Cijena ne smije biti manja od 1!" : "";
 
       this.errors.rooms =
-        this.ad.title.rooms < 1 ? "Broj soba ne može biti manje od 1!" : "";
+        this.adData.title.rooms < 1 ? "Broj soba ne može biti manje od 1!" : "";
 
       this.errors.surface =
-        this.ad.title.surface < 1 ? "Površina ne može biti manje od 1!" : "";
+        this.adData.title.surface < 1
+          ? "Površina ne može biti manje od 1!"
+          : "";
 
       this.errors.floors =
-        this.ad.title.floors < 0 ? "Kat ne smije biti manji od 0!" : "";
+        this.adData.title.floors < 0 ? "Kat ne smije biti manji od 0!" : "";
 
       /* Provjera ako nema errora, odnosno da li su svi errori prazan string */
       return Object.values(this.errors).every((error) => error === "");
@@ -214,12 +217,12 @@ export default {
     async submitAd() {
       if (this.validateFields()) {
         /* Ubacujemo vrijednosti za da/ne pitanja */
-        (this.ad.parking = this.preferences["Parking?"]),
-          (this.ad.pets = this.preferences["Ljubimci?"]),
-          (this.ad.smoking = this.preferences["Pušenje?"]),
-          (this.ad.season = this.preferences["Dostupno tijekom sezone?"]),
-          (this.ad.furnished = this.preferences["Namještaj?"]),
-          console.log(this.ad);
+        (this.adData.parking = this.preferences["Parking?"]),
+          (this.adData.pets = this.preferences["Ljubimci?"]),
+          (this.adData.smoking = this.preferences["Pušenje?"]),
+          (this.adData.season = this.preferences["Dostupno tijekom sezone?"]),
+          (this.adData.furnished = this.preferences["Namještaj?"]),
+          console.log(this.adData);
 
         /* Uploadamo slike */
         this.$refs.myDropzone.processQueue();
@@ -229,26 +232,31 @@ export default {
     },
     /* Funkcija koja se izvodi nakon što su sve slike uploadane */
     async queueComplete() {
-      console.log(this.ad.url);
-      const response = await ads.postAds(this.ad);
-      console.log("success!, response: ", response);
-      this.$router.push({ name: "home" });
+      console.log("queueComplete");
+      /*     const response = await ads.postAds(this.adData);
+      if (response) {
+        console.log("success!, response: ", response);
+        this.$router.push({ name: "home" });
+      } */
     },
-    /* Funkcija koja se izvodi nakon što je slika uploadana, punimo ad.url array sa url-ovima */
+    /* Funkcija koja se izvodi nakon što je slika uploadana, punimo adData.url array sa url-ovima */
     handleSuccess(file, response) {
-      console.log("Response:", file);
-      this.ad.url.push(response.url);
+      console.log("File:", file);
+      console.log("Response:", response.asset_id);
+      this.imageUrls.push(response.url);
+      console.log(this.imageUrls);
     },
     /* Funckija za micanje slika */
-    removeThisFile(thisFile) {
-      this.$refs.myDropzone.removeFile(thisFile);
+    removeThisFile(file) {
+      console.log("file: ", JSON.parse(file.xhr.response).asset_id);
       console.log("File removed!");
+      this.imageUrls = this.imageUrls.filter((item) => item !== file.url);
+      console.log(this.imageUrls);
     },
   },
   components: {
     dropzone,
   },
-  async mounted() {},
-  name: "UploadView",
+  name: "EditView",
 };
 </script>
