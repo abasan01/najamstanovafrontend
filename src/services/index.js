@@ -63,7 +63,24 @@ const ads = {
   /* Za dodavanje oglasa */
   async postAds(body) {
     try {
+      console.log("postAds")
       const response = await Service.post(`/upload`, body, {
+        headers: {
+          authRequired: "true" /* Pokazuje da je potrebna autorizacija za ovaj request */
+        }
+      });
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      $router.go()
+      return false
+    }
+  },
+  /* Za updateanje oglasa */
+  async updateAds(body, id) {
+    try {
+      console.log("postAds")
+      const response = await Service.patch(`/upload/${id}`, body, {
         headers: {
           authRequired: "true" /* Pokazuje da je potrebna autorizacija za ovaj request */
         }

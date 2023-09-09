@@ -19,9 +19,9 @@
           ref="myDropzone"
           id="image-dropzone"
           :options="dropzoneOptions"
-          :duplicateCheck="true"
           @vdropzone-success="handleSuccess"
-          @vdropzone-queue-complete="queueComplete"
+          @vdropzone-file-added="addedFile"
+          @vdropzone-removed-file="removeFile"
           required
         ></dropzone>
       </div>
@@ -114,9 +114,7 @@
         <input class="form-check-input" type="checkbox" v-model="ad.lift" />
         <label class="form-check-label">Lift?</label>
       </div>
-      <button type="submit" class="btn btn-primary" @click="submitAd">
-        Dodaj oglas
-      </button>
+      <button type="submit" class="btn btn-primary">Dodaj oglas</button>
     </form>
   </div>
 </template>
@@ -172,7 +170,6 @@ export default {
         params: {
           upload_preset: "ml_default",
         },
-        autoProcessQueue: false,
         addRemoveLinks: true,
       },
     };
@@ -184,12 +181,10 @@ export default {
         this.ad.title.length < 10 ? "Naslov mora biti dulji od 10 slova!" : "";
 
       this.errors.url =
-        this.$refs.myDropzone.getQueuedFiles().length < 1
-          ? "Dodajte bar jednu sliku!"
-          : "";
+        this.ad.url.length < 1 ? "Dodajte bar jednu sliku!" : "";
 
       this.errors.description =
-        this.ad.title.description < 10
+        this.ad.description.length < 10
           ? "Opis mora biti dulji od 10 slova!"
           : "";
 
@@ -197,52 +192,57 @@ export default {
         this.ad.location.length < 1 ? "Upišite lokaciju!" : "";
 
       this.errors.price =
-        this.ad.title.price < 1 ? "Cijena ne smije biti manja od 1!" : "";
+        this.ad.price < 1 ? "Cijena ne smije biti manja od 1!" : "";
 
       this.errors.rooms =
-        this.ad.title.rooms < 1 ? "Broj soba ne može biti manje od 1!" : "";
+        this.ad.rooms < 1 ? "Broj soba ne može biti manje od 1!" : "";
 
       this.errors.surface =
-        this.ad.title.surface < 1 ? "Površina ne može biti manje od 1!" : "";
+        this.ad.surface < 1 ? "Površina ne može biti manje od 1!" : "";
 
       this.errors.floors =
-        this.ad.title.floors < 0 ? "Kat ne smije biti manji od 0!" : "";
+        this.ad.floors < 0 ? "Kat ne smije biti manji od 0!" : "";
 
       /* Provjera ako nema errora, odnosno da li su svi errori prazan string */
       return Object.values(this.errors).every((error) => error === "");
     },
     async submitAd() {
+      console.log("SubmitAd");
       if (this.validateFields()) {
         /* Ubacujemo vrijednosti za da/ne pitanja */
-        (this.ad.parking = this.preferences["Parking?"]),
-          (this.ad.pets = this.preferences["Ljubimci?"]),
-          (this.ad.smoking = this.preferences["Pušenje?"]),
-          (this.ad.season = this.preferences["Dostupno tijekom sezone?"]),
-          (this.ad.furnished = this.preferences["Namještaj?"]),
-          console.log(this.ad);
+        this.ad.parking = this.preferences["Parking?"];
+        this.ad.pets = this.preferences["Ljubimci?"];
+        this.ad.smoking = this.preferences["Pušenje?"];
+        this.ad.season = this.preferences["Dostupno tijekom sezone?"];
+        this.ad.furnished = this.preferences["Namještaj?"];
 
-        /* Uploadamo slike */
-        this.$refs.myDropzone.processQueue();
+        const response = await ads.postAds(this.ad);
+        this.$refs.myDropzone.disable();
+        console.log("success!, response: ", response);
+        this.$router.push({ name: "home" });
       } else {
-        console.log(this.errors);
+        console.error(this.errors);
+        this.$router.go();
       }
-    },
-    /* Funkcija koja se izvodi nakon što su sve slike uploadane */
-    async queueComplete() {
-      console.log(this.ad.url);
-      const response = await ads.postAds(this.ad);
-      console.log("success!, response: ", response);
-      this.$router.push({ name: "home" });
     },
     /* Funkcija koja se izvodi nakon što je slika uploadana, punimo ad.url array sa url-ovima */
     handleSuccess(file, response) {
-      console.log("Response:", file);
-      this.ad.url.push(response.url);
+      console.log("Name:", file.name);
+      this.ad.url.push({ name: file.name, url: response.url });
+    },
+    addedFile(file) {
+      if (this.ad.url.some((obj) => obj["name"] === file.name)) {
+        alert("Ne možete imati istu sliku dvaput!");
+        this.$refs.myDropzone.removeFile(file);
+      } else {
+        console.log("OK");
+      }
     },
     /* Funckija za micanje slika */
-    removeThisFile(thisFile) {
-      this.$refs.myDropzone.removeFile(thisFile);
-      console.log("File removed!");
+    removeFile(file) {
+      console.log("File removed! ", file.name);
+      const index = this.ad.url.findIndex((obj) => obj["name"] === file.name);
+      this.ad.url.splice(index, 1);
     },
   },
   components: {
