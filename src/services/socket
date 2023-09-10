@@ -1,0 +1,38 @@
+import {
+    io
+}
+from 'socket.io-client';
+import {
+    eventBus
+} from "../main";
+
+
+class SocketioService {
+    socket;
+    constructor() {}
+
+
+    setupSocketConnection(user) {
+        this.socket = io("http://localhost:3000");
+
+        this.socket.emit("add-user", user)
+
+        this.socket.on('msg-recieve', (data) => {
+            eventBus.$emit('message-received', data);
+        });
+    }
+
+    sendMessage(data) {
+        this.socket.emit("send-msg", data)
+    }
+
+    disconnect() {
+        if (this.socket) {
+            this.socket.disconnect();
+        }
+    }
+
+
+}
+
+export default new SocketioService();

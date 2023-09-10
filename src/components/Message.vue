@@ -2,11 +2,11 @@
   <div
     class="message"
     :class="{
-      incoming: message.type === 'incoming',
-      outgoing: message.type === 'outgoing',
+      incoming: message.type == false,
+      outgoing: message.type == true,
     }"
   >
-    {{ message.text }}
+    {{ message.message }}
   </div>
 </template>
 

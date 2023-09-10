@@ -156,7 +156,58 @@ const users = {
   }
 }
 
+/* Poruke */
+const messages = {
+  async addMessage(body) {
+    try {
+      const response = await Service.post("/messages", body, {
+        headers: {
+          authRequired: "true"
+        }
+      })
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
+  },
+  async getConversations() {
+    try {
+      const response = await Service.get("/conversations", {
+        headers: {
+          authRequired: "true"
+        }
+      })
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
+  },
+  async getMessages(params) {
+    try {
+      const response = await Service.get("/messages", {
+        params: {
+          from: params.from,
+          to: params.to
+        },
+        headers: {
+          authRequired: "true"
+        }
+      })
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
+  }
+}
+
+const host = "http://localhost:3000"
+
 export {
   ads,
-  users
+  users,
+  messages,
+  host
 }
