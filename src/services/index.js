@@ -91,6 +91,21 @@ const ads = {
       $router.go()
       return false
     }
+  },
+  async deleteAds(id) {
+    try {
+      console.log("postAds")
+      const response = await Service.delete(`/upload/${id}`, {
+        headers: {
+          authRequired: "true" /* Pokazuje da je potrebna autorizacija za ovaj request */
+        }
+      });
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      $router.go()
+      return false
+    }
   }
 }
 
@@ -174,6 +189,19 @@ const messages = {
   async getConversations() {
     try {
       const response = await Service.get("/conversations", {
+        headers: {
+          authRequired: "true"
+        }
+      })
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
+  },
+  async addConversations(body) {
+    try {
+      const response = await Service.patch("/conversations", body, {
         headers: {
           authRequired: "true"
         }

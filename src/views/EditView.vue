@@ -117,6 +117,39 @@
       </div>
       <button type="submit" class="btn btn-primary">Dodaj oglas</button>
     </form>
+
+    <button @click="showModal()" class="btn btn-danger">Izbriši oglas</button>
+
+    <div
+      class="modal fade"
+      id="confirmDelete"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Upozorenje</h5>
+          </div>
+          <div class="modal-body">
+            Jeste li sigurni da želite obrisati oglas?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" @click="deleteAd()">
+              Da
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="cancelDelete()"
+            >
+              Ne
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -163,6 +196,10 @@ export default {
   },
   async mounted() {
     this.adData = await ads.getAdsDetail(this.$route.params.id);
+    if (!this.adData) {
+      this.$router.push({ name: "home" });
+      return;
+    }
     if (this.adData.createdBy.email == JSON.parse(users.getUser()).email) {
       console.log(this.adData);
     } else {
@@ -171,6 +208,17 @@ export default {
     }
   },
   methods: {
+    showModal() {
+      $("#confirmDelete").modal("show");
+    },
+    async deleteAd() {
+      await ads.deleteAds(this.$route.params.id);
+      $("#confirmDelete").modal("hide");
+      this.$router.push({ name: "home" });
+    },
+    cancelDelete() {
+      $("#confirmDelete").modal("hide");
+    },
     dropzoneMounted() {
       this.adData.url.forEach((adUrl) => {
         var file = { size: 123, name: adUrl.name, type: "image/png" };

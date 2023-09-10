@@ -69,13 +69,18 @@ export default {
   },
   async mounted() {
     const response = await messages.getConversations();
+
     response.conversations.forEach((item) => {
       this.conversations.push(item);
     });
     this.currentUser = response._id;
-    console.log(this.currentUser);
     SocketioService.setupSocketConnection(this.currentUser);
-    this.selectConversation(this.conversations[0]);
+
+    if (this.$route.params.id) {
+      this.selectConversation(this.$route.params.id);
+    } else {
+      this.selectConversation(this.conversations[0]);
+    }
   },
   created() {
     eventBus.$on("message-received", (data) => {
@@ -94,6 +99,7 @@ export default {
   },
   methods: {
     async selectConversation(conversation) {
+      console.log(conversation);
       this.selectedConversation = conversation;
       const params = {
         from: this.currentUser,
@@ -105,18 +111,14 @@ export default {
     },
     async sendMessage() {
       if (this.newMessage.trim() !== "") {
-        this.messages.push({
-          text: this.newMessage,
-          type: "outgoing",
-        });
         const body = {
           message: this.newMessage,
           from: this.currentUser,
           to: this.selectedConversation._id,
         };
         SocketioService.sendMessage(body);
-        this.messages.push({ type: true, message: this.newMessage });
         const response = await messages.addMessage(body);
+        this.messages.push({ type: true, message: this.newMessage });
         console.log(response);
         this.newMessage = "";
       }
@@ -147,6 +149,8 @@ export default {
   border: 1px solid #ccc;
   padding: 10px;
   height: 70vh;
+  display: flex;
+  flex-direction: column;
   overflow-y: scroll;
 }
 
@@ -154,13 +158,7 @@ export default {
   padding: 10px;
   margin: 5px;
   border-radius: 10px;
-}
-
-.incoming {
-  background-color: #f2f2f2;
-}
-
-.outgoing {
-  background-color: #e2f7fb;
+  display: flex;
+  flex-direction: column;
 }
 </style>

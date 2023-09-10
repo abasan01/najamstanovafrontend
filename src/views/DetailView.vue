@@ -4,9 +4,10 @@
       <div class="col-md-6">
         <!-- Slika -->
         <img
-          src="https://images.pexels.com/photos/4652004/pexels-photo-4652004.jpeg?auto=compress&cs=tinysrgb&w=1600"
-          alt="Apartment Image"
-          class="img-fluid mb-4"
+          v-for="url in adData.url"
+          :key="url.name"
+          :src="url.url"
+          class="card-img-top"
         />
       </div>
       <div class="col-md-6">
@@ -38,21 +39,53 @@
           {{ adData.description }}
         </p>
       </div>
+      <!-- Dopisivanje sa korisnikom -->
+      <a
+        v-if="currentUser != adData.createdBy.email && currentUser"
+        @click="newConversation()"
+        >Dopisujte se s korisnikom</a
+      >
+      <!-- Izmjenjivanje oglasa -->
+
+      <a v-if="currentUser == adData.createdBy.email" @click="pushRoute()"
+        >Izmjenite oglas</a
+      >
     </div>
   </div>
 </template>
 
 <script>
-import { ads } from "@/services";
+import { ads, users, messages } from "@/services";
 
 export default {
   data() {
     return {
       adData: null,
+      currentUser: "",
     };
   },
   async mounted() {
-    this.adData = await ads.getAdsDetail(this.$route.params.id);
+    try {
+      this.adData = await ads.getAdsDetail(this.$route.params.id);
+      this.currentUser = JSON.parse(users.getUser())?.email || "";
+
+      console.log(this.currentUser);
+      console.log(this.adData.createdBy.email);
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  methods: {
+    async newConversation() {
+      await messages.addConversations(this.adData.createdBy);
+      this.$router.push({
+        name: "messages",
+        params: { id: this.adData.createdBy },
+      });
+    },
+    pushRoute() {
+      this.$router.push({ name: "edit", params: { id: this.adData._id } });
+    },
   },
   name: "DetailView",
 };

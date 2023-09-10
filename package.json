@@ -12,6 +12,7 @@
     "axios": "^1.4.0",
     "cloudinary-vue": "^1.2.4",
     "core-js": "^3.8.3",
+    "moment": "^2.29.4",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "vue": "^2.6.14",

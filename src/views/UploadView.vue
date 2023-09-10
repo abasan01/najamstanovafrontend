@@ -222,7 +222,6 @@ export default {
         this.$router.push({ name: "home" });
       } else {
         console.error(this.errors);
-        this.$router.go();
       }
     },
     /* Funkcija koja se izvodi nakon što je slika uploadana, punimo ad.url array sa url-ovima */
