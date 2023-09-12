@@ -3,14 +3,13 @@
     <div class="row">
       <!-- Sidebar -->
       <div class="col-3">
-        <sidebar />
+        <sidebar :props="minMax" />
       </div>
 
       <!-- Oglasi -->
       <div class="col-9 row">
-        <h1>Test</h1>
         <ad
-          class="col-span-4"
+          class="col-span-4 m-2"
           v-for="ad of this.adsData"
           :key="ad._id"
           :props="ad"
@@ -44,12 +43,36 @@ export default {
       floors: [0, 10],
       lift: Boolean,
       adsData: null,
+      minMax: null,
     };
   },
   async mounted() {
     const urlParams = new URLSearchParams(window.location.search);
     this.adsData = await ads.getAds(urlParams);
-    console.log(this.adsData);
+    this.minMax = await this.returnMinMax();
+  },
+  methods: {
+    findMinMax(array, key) {
+      return array.reduce(
+        (result, obj) => {
+          const value = obj[key];
+          result.min = Math.min(result.min, value);
+          result.max = Math.max(result.max, value);
+          return result;
+        },
+        { min: array[0][key], max: array[0][key] }
+      );
+    },
+    async returnMinMax() {
+      const array = await ads.getAds();
+
+      return {
+        price: this.findMinMax(array, "price"),
+        rooms: this.findMinMax(array, "rooms"),
+        surface: this.findMinMax(array, "surface"),
+        floors: this.findMinMax(array, "floors"),
+      };
+    },
   },
   name: "HomeView",
   components: {

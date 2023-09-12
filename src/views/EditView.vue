@@ -4,84 +4,116 @@
 
     <!-- Forma za oglas -->
     <form @submit.prevent="submitAd">
-      <div class="form-group">
-        <label for="title">Naslov</label>
-        <input
-          type="text"
-          class="form-control"
-          id="title"
-          v-model="adData.title"
-          required
-        />
-        {{ errors.title }}
+      <div class="form-group row align-items-center justify-content-center">
+        <div class="col-1">
+          <label class="label-right" for="title">Naslov:</label>
+        </div>
+        <div class="col-9">
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            v-model="adData.title"
+            placeholder="Upišite naslov..."
+            required
+          />
+        </div>
+        <p class="p-red">{{ errors.title }}</p>
         <!-- Upload za slike -->
-        <dropzone
-          ref="myDropzone"
-          id="image-dropzone"
-          :options="dropzoneOptions"
-          @vdropzone-success="handleSuccess"
-          @vdropzone-file-added="addedFile"
-          @vdropzone-mounted="dropzoneMounted"
-          @vdropzone-removed-file="removeFile"
-          required
-        ></dropzone>
+        <div class="center d-flex justify-content-center align-items-center">
+          <dropzone
+            ref="myDropzone"
+            id="image-dropzone"
+            :options="dropzoneOptions"
+            @vdropzone-success="handleSuccess"
+            @vdropzone-file-added="addedFile"
+            @vdropzone-mounted="dropzoneMounted"
+            @vdropzone-removed-file="removeFile"
+            required
+          ></dropzone>
+        </div>
       </div>
-      {{ errors.url }}
-      <div class="form-group">
-        <label for="description">Opis</label>
-        <textarea
-          class="form-control"
-          id="description"
-          rows="3"
-          v-model="adData.description"
-          required
-        ></textarea>
+      <p class="p-red">{{ errors.url }}</p>
+      <div class="form-group row align-items-center">
+        <div class="col-2">
+          <label class="label-right" for="description">Opis:</label>
+        </div>
+        <div class="col-9">
+          <textarea
+            class="form-control"
+            id="description"
+            rows="3"
+            v-model="adData.description"
+            placeholder="Upišite neki opis..."
+            required
+          ></textarea>
+        </div>
       </div>
-      {{ errors.description }}
-      <div class="form-group">
-        <label for="description">Lokacija</label>
-        <textarea
-          class="form-control"
-          id="description"
-          rows="3"
-          v-model="adData.location"
-          required
-        ></textarea>
+      <p class="p-red">{{ errors.description }}</p>
+      <div class="form-group row align-items-center justify-content-start">
+        <div class="col-2 offset-3">
+          <label class="label-right" for="description">Lokacija:</label>
+        </div>
+        <div class="col-4">
+          <input
+            class="form-control"
+            id="description"
+            rows="3"
+            v-model="adData.location"
+            placeholder="Upišite lokaciju..."
+            required
+          />
+        </div>
       </div>
-      {{ errors.location }}
-      <div class="form-group">
-        <label for="price">Cijena u Eurima</label>
-        <input
-          type="number"
-          class="form-control"
-          id="price"
-          v-model="adData.price"
-          required
-        />
+      <p class="p-red">{{ errors.location }}</p>
+      <div class="form-group row align-items-center justify-content-start">
+        <div class="col-2 offset-3">
+          <label class="label-right" for="price">Cijena u Eurima:</label>
+        </div>
+        <div class="col-2">
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            v-model="adData.price"
+            placeholder="Upišite cijenu..."
+            required
+          />
+        </div>
       </div>
-      {{ errors.price }}
-      <div class="form-group">
-        <label for="price">Broj soba</label>
-        <input
-          type="number"
-          class="form-control"
-          id="price"
-          v-model="adData.rooms"
-          required
-        />
+      <p class="p-red">{{ errors.price }}</p>
+      <div class="form-group row align-items-center justify-content-start">
+        <div class="col-2 offset-3">
+          <label class="label-right" for="price">Broj soba:</label>
+        </div>
+        <div class="col-2">
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            v-model="adData.rooms"
+            placeholder="Upišite broj soba..."
+            required
+          />
+        </div>
+        <p class="p-red">{{ errors.rooms }}</p>
       </div>
-      {{ errors.rooms }}
-      <div class="form-group">
-        <label for="price">Površina u m²</label>
-        <input
-          type="number"
-          class="form-control"
-          id="price"
-          v-model="adData.surface"
-          required
-        />
+      <div class="form-group row align-items-center justify-content-start">
+        <div class="col-2 offset-3">
+          <label class="label-right" for="price">Površina u m²:</label>
+        </div>
+        <div class="col-2">
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            v-model="adData.surface"
+            placeholder="Upišite površinu..."
+            required
+          />
+        </div>
       </div>
-      {{ errors.surface }}
+      <p class="p-red">{{ errors.surface }}</p>
       <div
         class="form-check"
         v-for="(value, preference) in preferences"
@@ -96,26 +128,28 @@
           />
         </label>
       </div>
-
-      Odabrano: {{ preferences }}
-
-      <div class="form-group">
-        <label for="price">Kat</label>
-        <input
-          type="number"
-          class="form-control"
-          id="price"
-          v-model="adData.floors"
-          required
-        />
+      <div class="my-3 form-group row align-items-center justify-content-start">
+        <div class="col-2 offset-3">
+          <label class="label-right" for="price">Kat:</label>
+        </div>
+        <div class="col-2">
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            v-model="adData.floors"
+            placeholder="Upišite broj katova..."
+            required
+          />
+        </div>
       </div>
-      {{ errors.floors }}
+      <p class="p-red">{{ errors.floors }}</p>
 
       <div v-if="adData.floors != 0">
         <input class="form-check-input" type="checkbox" v-model="adData.lift" />
-        <label class="form-check-label">Lift?</label>
+        <label class="form-check-label">Lift</label>
       </div>
-      <button type="submit" class="btn btn-primary">Dodaj oglas</button>
+      <button type="submit" class="my-3 btn">Izmijeni oglas</button>
     </form>
 
     <button @click="showModal()" class="btn btn-danger">Izbriši oglas</button>
@@ -307,3 +341,71 @@ export default {
   name: "EditView",
 };
 </script>
+
+<style>
+.vue-dropzone {
+  background-color: #10b981;
+  color: #f5f5f5;
+  border-radius: 10px;
+  width: 88%;
+  margin-bottom: 10px;
+}
+
+.vue-dropzone img {
+  object-fit: cover !important;
+}
+
+.vue-dropzone:hover {
+  background-color: #15d897;
+  color: #f5f5f5;
+}
+
+.dropzone .dz-message {
+  color: #f5f5f5;
+  opacity: 0.8;
+}
+
+.vue-dropzone .dz-preview .dz-details {
+  background-color: #10b981;
+  color: #f5f5f5;
+  border-radius: 20px;
+}
+
+.vue-dropzone .dz-preview .dz-image {
+  background-color: #10b981;
+  color: #f5f5f5;
+  border-radius: 20px;
+}
+
+.dropzone .dz-preview.dz-image-preview {
+  background: none;
+}
+
+.label-right {
+  float: right;
+}
+
+.p-red {
+  color: #d92246;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.btn-danger {
+  background-color: #d92246;
+  border: 1px solid #b41d3b;
+  color: #f5f5f5;
+}
+.btn-danger:hover {
+  background-color: #d92246;
+  border: 1px solid #b41d3b;
+  color: #f5f5f5;
+}
+
+.modal-content {
+  background-color: #2c3e50;
+}
+</style>

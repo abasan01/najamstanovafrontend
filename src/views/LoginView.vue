@@ -16,7 +16,7 @@
                   @click="toggleLogin"
                   :disabled="state"
                   type="button"
-                  class="btn btn-custom mx-4"
+                  class="btn mx-4"
                   data-toggle="tooltip"
                   data-placement="top"
                   title="Ulogirajte se u svoj account"
@@ -28,7 +28,7 @@
                   @click="toggleSignup"
                   :disabled="!state"
                   type="button"
-                  class="btn btn-custom mx-4"
+                  class="btn mx-4"
                   data-toggle="tooltip"
                   data-placement="top"
                   title="Napravite novi account ukoliko nemate svoj"
@@ -104,7 +104,7 @@
                 <button
                   type="button"
                   @click="login()"
-                  class="btn btn-custom btn-lg"
+                  class="btn btn-lg"
                   style="padding-left: 2.5rem; padding-right: 2.5rem"
                 >
                   Ulogiraj se
@@ -115,7 +115,7 @@
                 <button
                   type="button"
                   @click="signup()"
-                  class="btn btn-custom btn-lg"
+                  class="btn btn-lg"
                   style="padding-left: 2.5rem; padding-right: 2.5rem"
                 >
                   Registriraj se

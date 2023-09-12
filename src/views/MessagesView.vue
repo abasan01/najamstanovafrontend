@@ -1,48 +1,55 @@
 <template>
-  <div class="d-flex" style="height: 100%">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h2>Razgovori</h2>
-      <ul class="list-group" v-if="this.selectedConversation">
-        <li
-          class="list-group-item"
-          v-for="conversation in conversations"
-          :key="conversation._id"
-          @click="selectConversation(conversation)"
-        >
-          {{ conversation.email }}
-        </li>
-      </ul>
-    </div>
+  <div class="container" style="height: 100%">
+    <div class="row">
+      <!-- sidebar-messages -->
+      <div class="sidebar-messages col-3 rounded">
+        <h2>Razgovori</h2>
+        <ul class="list-group" v-if="this.selectedConversation">
+          <li
+            class="list-group-item clickable"
+            v-for="conversation in conversations"
+            :key="conversation._id"
+            :class="{
+              active: selectedConversation._id == conversation._id,
+            }"
+            @click="selectConversation(conversation)"
+          >
+            {{ conversation.email }}
+          </li>
+        </ul>
+      </div>
 
-    <!-- Glavni prozor -->
-    <div class="flex-grow-1">
-      <div class="container chat-container">
-        <div
-          class="chat-area"
-          ref="scrollContainer"
-          v-if="this.selectedConversation"
-        >
-          <message
-            v-for="message in messages"
-            :key="message.id"
-            :message="message"
-          />
-        </div>
+      <!-- Glavni prozor -->
+      <div class="col-9">
+        <div class="container chat-container rounded">
+          <div
+            class="chat-area"
+            ref="scrollContainer"
+            v-if="this.selectedConversation"
+          >
+            <message
+              v-for="message in messages"
+              :key="message.id"
+              :message="message"
+            />
+          </div>
 
-        <!-- input -->
-        <div class="input-group mt-3">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Upišite poruku..."
-            v-model="newMessage"
-            @keyup.enter="sendMessage"
-          />
-          <div class="input-group-append">
-            <button class="btn btn-primary" @click="sendMessage">
-              Pošalji
-            </button>
+          <!-- input -->
+          <div class="input-group mt-3 row">
+            <div class="col-11">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Upišite poruku..."
+                v-model="newMessage"
+                @keyup.enter="sendMessage"
+              />
+            </div>
+            <div class="input-group-append col-1">
+              <button class="btn btn-primary" @click="sendMessage">
+                Pošalji
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -73,13 +80,19 @@ export default {
     response.conversations.forEach((item) => {
       this.conversations.push(item);
     });
-    this.currentUser = response._id;
-    SocketioService.setupSocketConnection(this.currentUser);
 
-    if (this.$route.params.id) {
-      this.selectConversation(this.$route.params.id);
+    if (!this.conversations) {
+      await alert("Nemate otvorene razgovore!");
+      this.$router.push({ name: "home" });
     } else {
-      this.selectConversation(this.conversations[0]);
+      this.currentUser = response._id;
+      SocketioService.setupSocketConnection(this.currentUser);
+
+      if (this.$route.params.id) {
+        this.selectConversation(this.$route.params.id);
+      } else {
+        this.selectConversation(this.conversations[0]);
+      }
     }
   },
   created() {
@@ -130,12 +143,12 @@ export default {
 };
 </script>
 
-<style>
-.sidebar {
-  width: 25%;
-  background-color: #f2f2f2;
+<style lang="scss" scoped>
+.sidebar-messages {
   padding: 20px;
-  border-right: 1px solid #ccc;
+  color: #f5f5f5;
+  background-color: #2c3e50;
+  border: 1px solid #acabab;
 }
 
 .chat-container {
@@ -160,5 +173,17 @@ export default {
   border-radius: 10px;
   display: flex;
   flex-direction: column;
+}
+
+.list-group-item {
+  color: #f5f5f5;
+  background-color: #1d2a36;
+  border: 1px solid #acabab;
+  margin-bottom: 5px;
+}
+
+.active {
+  background-color: #10b981 !important;
+  border: 1px solid #0d835b !important;
 }
 </style>

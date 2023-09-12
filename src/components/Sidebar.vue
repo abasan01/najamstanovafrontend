@@ -1,74 +1,101 @@
 <template>
-  <div class="card position-sticky" style="top: 20px">
-    <div class="card-body">
-      <h5 class="card-title">Filtriraj</h5>
+  <div class="sidebar card position-sticky" style="top: 20px">
+    <div class="card-body" v-if="props">
+      <h5 class="card-title">Odaberite filtere</h5>
       <!-- Pretraživanje lokacije -->
       <form @submit.prevent="search">
         <!-- Location Input -->
         <div class="form-group">
-          <label for="location">Lokacija</label>
+          <label for="location">Lokacija:</label>
           <input
             type="text"
             class="form-control"
             id="location"
+            placeholder="Upišite lokaciju..."
             v-model="location"
           />
         </div>
         <!-- Slider-->
         <!-- https://github.com/vueform/slider/tree/2.0.10#using-with-vue-2 -->
         <div class="form-group">
-          <label for="price">Cijena</label>
+          <label for="price">Cijena: </label>
           <div class="form-group">
-            <slider v-model="price" id="price" :max="1000" />
+            <slider
+              class="slider"
+              v-model="price"
+              id="price"
+              :min="props.price.min"
+              :max="props.price.max"
+            />
           </div>
         </div>
         <!-- Broj soba -->
         <div class="form-group">
-          <label for="rooms">Broj soba</label>
+          <label for="rooms">Broj soba: </label>
           <div class="form-group">
-            <slider v-model="rooms" id="rooms" />
+            <slider
+              class="slider"
+              v-model="rooms"
+              id="rooms"
+              :min="props.rooms.min"
+              :max="props.rooms.max"
+            />
           </div>
         </div>
         <!-- Površina -->
         <div class="form-group">
-          <label for="surface">Površina stana u m²</label>
+          <label for="surface">Površina stana u m²: </label>
           <div class="form-group">
-            <slider v-model="surface" id="surface" :max="200" />
+            <slider
+              class="slider"
+              v-model="surface"
+              id="surface"
+              :min="props.surface.min"
+              :max="props.surface.max"
+            />
           </div>
         </div>
         <!-- Pitanja -->
         <div
-          class="form-check"
+          class="form-check form-group"
           v-for="(value, preference) in preferences"
           :key="preference"
         >
-          <label class="form-check-label">
+          <label class="form-check-label clickable">
             {{ preference }}
             <input
-              class="form-check-input"
+              class="form-check-input clickable mb-2"
               type="checkbox"
               v-model="preferences[preference]"
             />
           </label>
         </div>
 
-        Odabrano: {{ preferences }}
-
         <!-- Kat -->
         <div class="form-group">
-          <label for="floors">Kat</label>
+          <label for="floors">Kat: </label>
           <div class="form-group">
-            <slider v-model="floors" id="floors" />
+            <slider
+              class="slider"
+              v-model="floors"
+              id="floors"
+              :min="props.floors.min"
+              :max="props.floors.max"
+            />
           </div>
         </div>
-        <div v-if="floors[1] != 0">
-          <input class="form-check-input" type="checkbox" v-model="lift" />
-          <label class="form-check-label">Lift?</label>
+        <div v-if="floors[1] != 0" class="mb-3">
+          <input
+            class="form-check-input clickable"
+            type="checkbox"
+            v-model="lift"
+          />
+          <label class="form-check-label clickable">Lift?</label>
         </div>
 
         <!-- Submit -->
         <div class="form-group">
-          <button type="submit" class="btn btn-primary">Traži</button>
+          <button type="submit" class="btn">Traži</button>
         </div>
       </form>
     </div>
@@ -98,6 +125,10 @@ export default {
       lift: false,
     };
   },
+  props: {
+    props: Object,
+  },
+  name: "Sidebar",
   computed: {
     sidebarData() {
       return {
@@ -161,3 +192,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.slider {
+  margin-top: 35px;
+  margin-bottom: 10px;
+}
+
+.sidebar {
+  color: #f5f5f5;
+  background-color: #2c3e50;
+  border: 1px solid #acabab;
+}
+</style>

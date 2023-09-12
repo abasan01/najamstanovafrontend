@@ -38,9 +38,6 @@ export default {
       return moment(this.message.createdAt).fromNow();
     },
   },
-  mounted() {
-    console.log(moment(this.message.createdAt).fromNow());
-  },
 };
 </script>
 
@@ -61,7 +58,7 @@ export default {
   padding: 10px;
   margin: 5px;
   border-radius: 10px;
-  display: flex;
+  display: block;
   align-items: center;
 }
 
@@ -75,14 +72,12 @@ small {
 }
 
 .incoming {
-  background-color: #f2f2f2;
-  width: 50%;
-  justify-content: flex-start;
+  background-color: #365c81;
+  max-width: 50%;
 }
 
 .outgoing {
-  background-color: #e2f7fb;
-  width: 50%;
-  justify-content: flex-end;
+  background-color: #10b981;
+  max-width: 50%;
 }
 </style>
