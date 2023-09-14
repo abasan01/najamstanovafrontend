@@ -101,15 +101,14 @@ export default {
     });
   },
   beforeDestroy() {
+    SocketioService.disconnect();
     eventBus.$off("message-received");
   },
   updated() {
     this.$refs.scrollContainer.scrollTop =
       this.$refs.scrollContainer.scrollHeight;
   },
-  beforeUnmount() {
-    SocketioService.disconnect();
-  },
+
   methods: {
     async selectConversation(conversation) {
       console.log(conversation);
@@ -131,8 +130,12 @@ export default {
         };
         SocketioService.sendMessage(body);
         const response = await messages.addMessage(body);
-        this.messages.push({ type: true, message: this.newMessage });
-        console.log(response);
+        if (response) {
+          this.messages.push({ type: true, message: this.newMessage });
+        } else {
+          throw new Error(500);
+        }
+
         this.newMessage = "";
       }
     },

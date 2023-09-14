@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import {
   users
 } from '@/services'
@@ -10,7 +9,7 @@ Vue.use(VueRouter)
 const routes = [{
     path: '/oglasi',
     name: 'home',
-    component: HomeView,
+    component: () => import('../views/HomeView.vue')
   }, {
     path: '/oglasi/:id',
     name: 'detail',
@@ -34,9 +33,6 @@ const routes = [{
   {
     path: '/login',
     name: 'login',
-    meta: {
-      needsUser: false
-    },
     component: () => import('../views/LoginView.vue')
   }, {
     path: '/messages',
@@ -56,16 +52,16 @@ const router = new VueRouter({
 
 /* Provjera prije nego što se ide na slijedeću stranicu */
 router.beforeEach(async (to, from, next) => {
-  const needsUser = to.meta.needsUser || false; /* Boolean koji nam govori kao treba korisnik za stranicu na koju pokušavamo ići */
-  const user = users.getUser();
-  console.log("from: ", from.name, "-> to: ", to.name, "needsUser: ", needsUser, "currentUser: ", !!user);
 
   if (!!!to.name) {
-    console.log("prvi if")
     /* Ako korisnik ide na stranicu koja ne postoji, šaljemo ga na home */
     next("/oglasi")
     return
   }
+
+  const needsUser = to.meta.needsUser || false; /* Boolean koji nam govori kao treba korisnik za stranicu na koju pokušavamo ići */
+  const user = users.getUser();
+
 
   /* If ako nema korisnika */
   if (!user && needsUser) {

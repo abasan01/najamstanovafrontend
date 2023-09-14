@@ -13,11 +13,10 @@ Service.interceptors.request.use((request) => {
   try {
     if (request.headers.authRequired) /* Provjera jel uopće potrebno autorizirati prije nego što se šalje req */ {
       const token = users.getToken()
-      console.log("token: ", token)
       if (token) {
-        request.headers['Authorization'] = 'Bearer ' + users.getToken();
+        request.headers['Authorization'] = 'Bearer ' + token;
       } else {
-        throw new Error("Token is missing"); /* Ukoliko fali token prekidamo sa requestom na backend */
+        throw new Error("Nedostaje token"); /* Ukoliko fali token prekidamo sa requestom na backend */
       }
     }
   } catch (e) {
@@ -31,12 +30,15 @@ Service.interceptors.response.use((response) => response, async (err) => {
   console.log(err.response.status)
   /* Ukoliko ne valja token */
   if (err.response.status == 401) {
+    await Alert("Neispravna prijava, molimo prijavite se opet")
+    users.logoutUser();
+    $router.go()
     return
   }
   /* Ukoliko je istekao token  */
   if (err.response.status == 403) {
-    console.log("logout")
-    await users.logoutUser();
+    await Alert("Vaša prijava je istekla, molimo prijavite se opet")
+    users.logoutUser();
     $router.go()
     return
   }
@@ -45,10 +47,15 @@ Service.interceptors.response.use((response) => response, async (err) => {
 /* Za dobivanje oglasa */
 const ads = {
   async getAds(terms) {
-    const response = await Service.get("/ads", {
-      params: terms
-    })
-    return response.data
+    try {
+      const response = await Service.get("/ads", {
+        params: terms
+      })
+      return response.data
+    } catch (e) {
+      console.error(e.message)
+      return false
+    }
   },
   /* Za dobivanje specifičnog oglasa */
   async getAdsDetail(id) {
@@ -124,7 +131,7 @@ const users = {
   /* Login za usera, patch pošto mijenjamo status korisnika */
   async loginUser(body) {
     try {
-      const response = await Service.patch("/login", body)
+      const response = await Service.post("/login", body)
       localStorage.setItem("user", JSON.stringify(response.data))
       return true
     } catch (e) {
@@ -133,14 +140,9 @@ const users = {
     }
   },
   /* Logout za usera, patch pošto mijenjamo status korisnika */
-  async logoutUser() {
+  logoutUser() {
     try {
-      const user = JSON.parse(this.getUser());
-      console.log(user)
-      const response = await Service.patch("/logout", user)
-
-      if (response) localStorage.removeItem("user")
-      console.log("response: ", response)
+      localStorage.removeItem("user")
       return
     } catch (e) {
       console.error(e.message)
@@ -151,7 +153,7 @@ const users = {
   getUser() {
     return localStorage.getItem("user")
   },
-  /* Koristimo kada šaljemo header, u funkciji je čisto radi preglednosti */
+  /* Koristimo kada šaljemo header */
   getToken() {
     const user = JSON.parse(this.getUser())
     if (user && user.token) {

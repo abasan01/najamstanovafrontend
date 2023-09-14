@@ -16,7 +16,6 @@
           />
         </div>
         <!-- Slider-->
-        <!-- https://github.com/vueform/slider/tree/2.0.10#using-with-vue-2 -->
         <div class="form-group">
           <label for="price">Cijena: </label>
           <div class="form-group">

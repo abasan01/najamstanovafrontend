@@ -6,6 +6,8 @@
           <div class="col-12">
             <img class="img-fluid" />
             <h1 class="mt-2">Najam Stanova</h1>
+            <h2 class="mt-5" v-show="!state">Registrirajte se</h2>
+            <h2 class="mt-5" v-show="state">Prijavite se</h2>
           </div>
           <div class="col-md-5 my-lg-5 py-lg-5">
             <form>
@@ -19,9 +21,9 @@
                   class="btn mx-4"
                   data-toggle="tooltip"
                   data-placement="top"
-                  title="Ulogirajte se u svoj account"
+                  title="Prijavite se u svoj account"
                 >
-                  Ulogiravanje
+                  Prijavljivanje
                 </button>
 
                 <button
@@ -107,7 +109,7 @@
                   class="btn btn-lg"
                   style="padding-left: 2.5rem; padding-right: 2.5rem"
                 >
-                  Ulogiraj se
+                  Prijavi se
                 </button>
               </div>
 
@@ -170,7 +172,7 @@ export default {
           this.$router.go();
         } else {
           this.errorState = true;
-          this.errorMessage = "Neuspiješno ulogiranje, probajte ponovno!";
+          this.errorMessage = "Neuspiješna prijava, probajte ponovno!";
         }
       } else {
         this.errorState = true;

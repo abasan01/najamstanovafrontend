@@ -28,20 +28,6 @@ import { ads } from "@/services";
 export default {
   data() {
     return {
-      value: [0, 100],
-      location: null,
-      rooms: [1, 5],
-      surface: [1, 200],
-      preferences: [
-        "Parking?",
-        "Ljubimci?",
-        "Pušenje?",
-        "Dostupno tijekom sezone?",
-        "Namještaj?",
-      ],
-      selectedPreferences: [],
-      floors: [0, 10],
-      lift: Boolean,
       adsData: null,
       minMax: null,
     };

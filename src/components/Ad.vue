@@ -30,7 +30,6 @@ export default {
   props: ["props"],
   methods: {
     pushRoute(paramsId) {
-      console.log(paramsId);
       this.$router.push({ name: "detail", params: { id: paramsId } });
     },
   },
