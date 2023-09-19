@@ -172,7 +172,7 @@ export default {
           this.$router.go();
         } else {
           this.errorState = true;
-          this.errorMessage = "Neuspiješna prijava, probajte ponovno!";
+          this.errorMessage = "Neuspješna prijava, probajte ponovno!";
         }
       } else {
         this.errorState = true;

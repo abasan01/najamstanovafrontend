@@ -14,7 +14,7 @@
           class="card-img-top"
         />
       </div>
-      <div class="col-4 info-container">
+      <div class="col-4 info-container text-start">
         <!-- Detalji -->
         <h2>{{ adData.title }}</h2>
         <p>

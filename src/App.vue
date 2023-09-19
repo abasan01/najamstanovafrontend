@@ -39,12 +39,12 @@
             </li>
             <li v-if="!loggedIn" class="nav-item active">
               <router-link class="nav-link" :to="{ name: 'login' }"
-                >Ulogiraj se</router-link
+                >Prijavi se</router-link
               >
             </li>
             <li v-if="loggedIn" class="nav-item active">
               <span class="nav-link clickable" @click="logout()"
-                >Odlogiraj se</span
+                >Odjavi se</span
               >
             </li>
           </ul>

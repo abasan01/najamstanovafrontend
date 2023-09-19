@@ -4,8 +4,8 @@
 
     <!-- Forma za oglas -->
     <form @submit.prevent="submitAd">
-      <div class="form-group row align-items-center justify-content-center">
-        <div class="col-1">
+      <div class="form-group row align-items-center">
+        <div class="col-2">
           <label class="label-right" for="title">Naslov:</label>
         </div>
         <div class="col-9">
@@ -18,20 +18,43 @@
             required
           />
         </div>
-        <p class="p-red">{{ errors.title }}</p>
+        <div class="form-group row align-items-center">
+          <div class="col-2"></div>
+          <div
+            v-show="errors.title"
+            class="col-3 alert alert-danger"
+            role="alert"
+          >
+            <b>
+              <p>{{ errors.title }}</p>
+            </b>
+          </div>
+        </div>
       </div>
       <!-- Upload za slike -->
-      <div class="center d-flex justify-content-center align-items-center">
-        <dropzone
-          ref="myDropzone"
-          id="image-dropzone"
-          :options="dropzoneOptions"
-          @vdropzone-success="handleSuccess"
-          @vdropzone-file-added="addedFile"
-          @vdropzone-removed-file="removeFile"
-        ></dropzone>
+      <div class="form-group row align-items-center">
+        <div class="col-2">
+          <label class="label-right" for="image-dropzone">Slike:</label>
+        </div>
+        <div class="col-9">
+          <dropzone
+            ref="myDropzone"
+            id="image-dropzone"
+            :options="dropzoneOptions"
+            @vdropzone-success="handleSuccess"
+            @vdropzone-file-added="addedFile"
+            @vdropzone-removed-file="removeFile"
+          ></dropzone>
+        </div>
       </div>
-      <p class="p-red">{{ errors.url }}</p>
+      <div class="form-group row align-items-center">
+        <div class="col-2"></div>
+        <div v-show="errors.url" class="col-3 alert alert-danger" role="alert">
+          <b>
+            <p>{{ errors.url }}</p>
+          </b>
+        </div>
+      </div>
       <div class="form-group row align-items-center">
         <div class="col-2">
           <label class="label-right" for="description">Opis:</label>
@@ -47,9 +70,20 @@
           ></textarea>
         </div>
       </div>
-      <p class="p-red">{{ errors.description }}</p>
-      <div class="form-group row align-items-center justify-content-start">
-        <div class="col-2 offset-3">
+      <div class="form-group row align-items-center">
+        <div class="col-2"></div>
+        <div
+          v-show="errors.description"
+          class="col-3 alert alert-danger"
+          role="alert"
+        >
+          <b>
+            <p>{{ errors.description }}</p>
+          </b>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <div class="col-2">
           <label class="label-right" for="description">Lokacija:</label>
         </div>
         <div class="col-4">
@@ -63,9 +97,20 @@
           />
         </div>
       </div>
-      <p class="p-red">{{ errors.location }}</p>
-      <div class="form-group row align-items-center justify-content-start">
-        <div class="col-2 offset-3">
+      <div class="form-group row align-items-center">
+        <div class="col-2"></div>
+        <div
+          v-show="errors.location"
+          class="col-3 alert alert-danger"
+          role="alert"
+        >
+          <b>
+            <p>{{ errors.location }}</p>
+          </b>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <div class="col-2">
           <label class="label-right" for="price">Cijena u Eurima:</label>
         </div>
         <div class="col-2">
@@ -79,9 +124,20 @@
           />
         </div>
       </div>
-      <p class="p-red">{{ errors.price }}</p>
-      <div class="form-group row align-items-center justify-content-start">
-        <div class="col-2 offset-3">
+      <div class="form-group row align-items-center">
+        <div class="col-2"></div>
+        <div
+          v-show="errors.price"
+          class="col-3 alert alert-danger"
+          role="alert"
+        >
+          <b>
+            <p>{{ errors.price }}</p>
+          </b>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <div class="col-2">
           <label class="label-right" for="price">Broj soba:</label>
         </div>
         <div class="col-2">
@@ -94,10 +150,21 @@
             required
           />
         </div>
-        <p class="p-red">{{ errors.rooms }}</p>
+        <div class="form-group row align-items-center">
+          <div class="col-2"></div>
+          <div
+            v-show="errors.rooms"
+            class="col-3 alert alert-danger"
+            role="alert"
+          >
+            <b>
+              <p>{{ errors.rooms }}</p>
+            </b>
+          </div>
+        </div>
       </div>
-      <div class="form-group row align-items-center justify-content-start">
-        <div class="col-2 offset-3">
+      <div class="form-group row align-items-center">
+        <div class="col-2">
           <label class="label-right" for="price">Površina u m²:</label>
         </div>
         <div class="col-2">
@@ -111,23 +178,38 @@
           />
         </div>
       </div>
-      <p class="p-red">{{ errors.surface }}</p>
-      <div
-        class="form-check"
-        v-for="(value, preference) in preferences"
-        :key="preference"
-      >
-        <label class="form-check-label">
-          {{ preference }}
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="preferences[preference]"
-          />
-        </label>
+      <div class="form-group row align-items-center">
+        <div class="col-2"></div>
+        <div
+          v-show="errors.surface"
+          class="col-3 alert alert-danger"
+          role="alert"
+        >
+          <b>
+            <p>{{ errors.surface }}</p>
+          </b>
+        </div>
       </div>
-      <div class="my-3 form-group row align-items-center justify-content-start">
-        <div class="col-2 offset-3">
+      <div class="form-group row align-items-start">
+        <div class="col-3 offset-2 text-start">
+          <div
+            class="form-check"
+            v-for="(value, preference) in preferences"
+            :key="preference"
+          >
+            <label class="form-check-label">
+              {{ preference }}
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="preferences[preference]"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <div class="col-2">
           <label class="label-right" for="price">Kat:</label>
         </div>
         <div class="col-2">
@@ -141,13 +223,31 @@
           />
         </div>
       </div>
-      <p class="p-red">{{ errors.floors }}</p>
-
-      <div v-if="ad.floors != 0">
-        <input class="form-check-input" type="checkbox" v-model="ad.lift" />
-        <label class="form-check-label">Lift?</label>
+      <div class="form-group row align-items-center">
+        <div class="col-2"></div>
+        <div
+          v-show="errors.floors"
+          class="col-3 alert alert-danger"
+          role="alert"
+        >
+          <b>
+            <p>{{ errors.floors }}</p>
+          </b>
+        </div>
       </div>
-      <button type="submit" class="mt-3 btn btn-primary">Dodaj oglas</button>
+      <div class="row align-items-center">
+        <div v-if="ad.floors > 0" class="col-3 offset-2 text-start">
+          <input class="form-check-input" type="checkbox" v-model="ad.lift" />
+          <label class="form-check-label">Lift?</label>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <div class="col-3 offset-2 text-start">
+          <button type="submit" class="mt-3 btn btn-primary">
+            Dodaj oglas
+          </button>
+        </div>
+      </div>
     </form>
   </div>
 </template>
@@ -236,10 +336,10 @@ export default {
         this.ad.price < 1 ? "Cijena ne smije biti manja od 1!" : "";
 
       this.errors.rooms =
-        this.ad.rooms < 1 ? "Broj soba ne može biti manje od 1!" : "";
+        this.ad.rooms < 1 ? "Broj soba ne smije biti manje od 1!" : "";
 
       this.errors.surface =
-        this.ad.surface < 1 ? "Površina ne može biti manje od 1!" : "";
+        this.ad.surface < 1 ? "Površina ne smije biti manja od 1!" : "";
 
       this.errors.floors =
         this.ad.floors < 0 ? "Kat ne smije biti manji od 0!" : "";
@@ -298,7 +398,7 @@ export default {
   background-color: #10b981;
   color: #f5f5f5;
   border-radius: 10px;
-  width: 88%;
+  width: 100%;
   margin-bottom: 10px;
 }
 
@@ -336,9 +436,9 @@ export default {
   float: right;
 }
 
-.p-red {
-  color: #d92246;
-  font-weight: bold;
+.alert {
+  margin-top: 10px;
+  margin-left: 15px;
 }
 
 .form-group {
